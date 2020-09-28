@@ -1,0 +1,58 @@
+---
+title: "exploratory_readmission"
+author: "Jenny Liu"
+date: "7/31/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+readmit1 <- readxl::read_xlsx("../data/BEH_IP_discharges_2018CY_deidentified_3.xlsx", sheet = 1)
+readmit2 <- readxl::read_xlsx("../data/BEH_IP_discharges_2018CY_deidentified_3.xlsx", sheet = 2)
+readmit3 <- readxl::read_xlsx("../data/BEH_IP_discharges_2018CY_deidentified_3.xlsx", sheet = 3)
+```
+
+Looking at primary diagnoses and proceeding diagnoses 
+```{r}
+diagnoses <- readxl::read_xlsx("../data/diagnoses.xlsx", sheet = 1)
+diagnoses <- distinct(diagnoses)
+
+#Dx20 <- data.frame(sort(unique(readmit1$Dx20)[!unique(readmit1$Dx20) %in% diagnoses$code == TRUE]))
+#write_csv(Dx20, "../data/diag20.csv")
+```
+
+```{r}
+# identifying the primary diagnoses from those who did readmit to those who did not
+diagnoses %>% 
+  filter(code %in% sort(unique(readmit3$PrimDx)[!unique(readmit3$PrimDx) %in% unique(readmit2$PrimDx) == TRUE]))
+```
+
+```{r}
+sum(is.na(readmit2$PES_12Month))/nrow(readmit2) #18%
+sum(is.na(readmit3$PES_12Month))/nrow(readmit3) #3%
+```
+
+```{r}
+sum(unique(readmit2$MRN) %in% unique(readmit3$MRN)) # double checking! 
+```
+
+```{r}
+readmit1 <- readmit1 %>% 
+  unite(all_diagnoses, c(names(readmit2[17:35])), 
+        sep = " ", remove = FALSE, na.rm = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
