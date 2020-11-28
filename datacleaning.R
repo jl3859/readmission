@@ -280,6 +280,3 @@ full_admit <- dplyr::bind_rows(before_readmit, readmit2)
 
 full_admit$other_diagnoses_count <- rowSums(full_admit[c(10,12:14)])
 
-
-
-
